@@ -1,5 +1,3 @@
-import { Observable } from 'rxjs'
-import { AxiosResponse } from 'axios'
 import { Injectable, HttpService } from '@nestjs/common'
 import { CryptoResult } from '../types/crypto.types'
 import { config } from '../../../config'
@@ -12,7 +10,11 @@ export class CoindeskService {
     this.coindeskApi = config.utils.coindeskApi
   }
 
-  getCoindeskData(): Observable<AxiosResponse<CryptoResult>> {
-    return this.httpService.get(this.coindeskApi)
+  async getCoindeskData(): Promise<CryptoResult> {
+    const result = this.httpService.get(this.coindeskApi)
+
+    const { data: coindeskData } = await result.toPromise()
+
+    return coindeskData
   }
 }

@@ -15,11 +15,7 @@ export class AuthController {
 
   @Post('login')
   async signIn(@Body() body: SignInBody): Promise<TokenResponse> {
-    const userFile = fs.readFileSync(
-      path.join(__dirname, '../../data/user.json')
-    )
-
-    const user = JSON.parse(userFile.toString()) as User
+    const user = this.readUserFile()
 
     if (body.email !== user.email || body.password !== user.password) {
       throw new HttpException('Campos inválidos', 400)
@@ -40,9 +36,17 @@ export class AuthController {
     }
   }
 
+  readUserFile(): User {
+    const userFile = fs.readFileSync(
+      path.join(__dirname, '../../../../data/user.json')
+    )
+
+    return JSON.parse(userFile.toString())
+  }
+
   updateUserFile(userData: Record<string, string>): void {
     fs.writeFileSync(
-      path.join(__dirname, '../../data/user.json'),
+      path.join(__dirname, '../../../../data/user.json'),
       JSON.stringify(userData)
     )
   }

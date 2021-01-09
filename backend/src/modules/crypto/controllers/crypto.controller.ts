@@ -24,15 +24,9 @@ export class CryptoController {
   @Get('btc')
   async getAllCurrencies(): Promise<CryptoResult> {
     try {
-      const result = this.coindeskService.getCoindeskData()
+      const coindeskData = await this.coindeskService.getCoindeskData()
 
-      const { data: coindeskData } = await result.toPromise()
-
-      const currenciesFile = fs.readFileSync(
-        path.join(__dirname, '../../data/currencies.json')
-      )
-
-      const currencies = JSON.parse(currenciesFile.toString()) as Currencies
+      const currencies = this.readCurrencyFile()
 
       return {
         ...coindeskData,
@@ -54,11 +48,7 @@ export class CryptoController {
   async updateCurrency(
     @Body() body: UpdateCurrencyBody
   ): Promise<{ message: string }> {
-    const currenciesFile = fs.readFileSync(
-      path.join(__dirname, '../../data/currencies.json')
-    )
-
-    const currencies = JSON.parse(currenciesFile.toString()) as Currencies
+    const currencies = this.readCurrencyFile()
 
     const updatedCurrencies = {
       ...currencies,
@@ -74,9 +64,17 @@ export class CryptoController {
     }
   }
 
+  readCurrencyFile(): Currencies {
+    const currenciesFile = fs.readFileSync(
+      path.join(__dirname, '../../../../data/currencies.json')
+    )
+
+    return JSON.parse(currenciesFile.toString())
+  }
+
   updateCurrencyFile(currencyData: Record<string, string>): void {
     fs.writeFileSync(
-      path.join(__dirname, '../../data/currencies.json'),
+      path.join(__dirname, '../../../../data/currencies.json'),
       JSON.stringify(currencyData)
     )
   }

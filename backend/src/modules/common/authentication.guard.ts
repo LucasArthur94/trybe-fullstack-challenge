@@ -15,10 +15,7 @@ const BYPASSED_HANDLERS = ['signIn']
 export class AuthenticationGuard implements CanActivate {
   async validateRequest(request: any): Promise<boolean> {
     try {
-      const userFile = fs.readFileSync(
-        path.join(__dirname, '../data/user.json')
-      )
-      const user = JSON.parse(userFile.toString()) as User
+      const user = this.readUserFile()
 
       const userToken = request?.headers.authorization
       const lastUserToken = user.lastValidToken
@@ -31,6 +28,14 @@ export class AuthenticationGuard implements CanActivate {
       console.error(`Unauthorized: `, e)
       throw new UnauthorizedException('Token inválido')
     }
+  }
+
+  readUserFile(): User {
+    const userFile = fs.readFileSync(
+      path.join(__dirname, '../../../data/user.json')
+    )
+
+    return JSON.parse(userFile.toString())
   }
 
   canActivate(
