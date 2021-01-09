@@ -7,7 +7,7 @@ const getEnv = (key: string) =>
 
 export const config = {
   port: parseInt(getEnv('PORT')) || 3000,
-  postgres: {
-    url: getEnv('DATABASE_URL'),
+  utils: {
+    coindeskApi: getEnv('COINDESK_API'),
   },
 }

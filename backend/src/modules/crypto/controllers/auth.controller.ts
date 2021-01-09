@@ -1,20 +1,11 @@
-import fs from 'fs'
-import {
-  Controller,
-  Post,
-  HttpStatus,
-  HttpException,
-  Body,
-  Put,
-  Logger,
-  Param,
-  Delete,
-} from '@nestjs/common'
+import * as fs from 'fs'
+import * as path from 'path'
+import { Controller, Post, HttpException, Body, Logger } from '@nestjs/common'
 import { SignInBody } from '../dto/user.dto'
 import { randomString } from '../helpers/random-string'
-import * as user from '../../data/user.json'
+import { User } from '../types/crypto.types'
 
-export type TokenResponse = {
+type TokenResponse = {
   token: string
 }
 
@@ -24,6 +15,12 @@ export class AuthController {
 
   @Post('login')
   async signIn(@Body() body: SignInBody): Promise<TokenResponse> {
+    const userFile = fs.readFileSync(
+      path.join(__dirname, '../../data/user.json')
+    )
+
+    const user = JSON.parse(userFile.toString()) as User
+
     if (body.email !== user.email || body.password !== user.password) {
       throw new HttpException('Campos inválidos', 400)
     }
@@ -33,19 +30,20 @@ export class AuthController {
     const newUserData = {
       email: user.email,
       password: user.password,
-      lastValidToken: user.lastValidToken,
+      lastValidToken: newToken,
     }
 
-    this.updateUser(newUserData)
+    this.updateUserFile(newUserData)
 
     return {
       token: newToken,
     }
   }
 
-  updateUser(userData: Record<string, string>): void {
-    fs.writeFile('../../data/user.json', userData, (err: any) =>
-      this.logger.error(err)
+  updateUserFile(userData: Record<string, string>): void {
+    fs.writeFileSync(
+      path.join(__dirname, '../../data/user.json'),
+      JSON.stringify(userData)
     )
   }
 }

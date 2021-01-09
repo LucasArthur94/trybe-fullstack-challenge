@@ -5,8 +5,8 @@
   "author": "Lucas Arthur Felgueiras",
   "license": "UNLICENSED",
   "scripts": {
-    "predev": "mkdir -p dist && cp .env.json dist/.env.json",
-    "prebuild": "rm -rf dist && mkdir -p dist && cp .env.json dist/.env.json",
+    "predev": "mkdir -p dist && mkdir dist/src && mkdir dist/src/modules && cp .env.json dist/.env.json && cp -R ./src/modules/data ./dist/src/modules",
+    "prebuild": "rm -rf dist && yarn predev",
     "build": "nest build",
     "dev": "NODE_ENV=dev nest start --watch",
     "docker:dev": "docker-compose up",
