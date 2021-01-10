@@ -6,7 +6,7 @@ import { LoginFormData } from './login-form.types'
 import { setAuthToken } from '../../helpers/auth'
 
 export const LoginForm: FC = () => {
-  const { login } = useLoginForm()
+  const { login, customError, setCustomError } = useLoginForm()
 
   const onSubmit = async (formData: LoginFormData) => {
     const { token } = await login(formData)
@@ -18,5 +18,11 @@ export const LoginForm: FC = () => {
     }
   }
 
-  return <LoginFormUI onSubmit={onSubmit} />
+  return (
+    <LoginFormUI
+      onSubmit={onSubmit}
+      customError={customError}
+      setCustomError={setCustomError}
+    />
+  )
 }

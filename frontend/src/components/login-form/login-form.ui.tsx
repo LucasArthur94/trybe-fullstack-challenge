@@ -2,12 +2,14 @@ import React, { FC } from 'react'
 import styled from 'styled-components'
 import { useForm } from 'react-hook-form'
 
-import { FormData } from './login-form.types'
+import { LoginFormData } from './login-form.types'
 import { testId } from '../../helpers/testId'
 import { emailValidator } from '../../helpers/emailValidator'
 
 type LoginFormUIProps = {
-  onSubmit: (data: FormData) => void
+  customError: string
+  setCustomError: (customError: string) => void
+  onSubmit: (formData: LoginFormData) => void
 }
 
 const FormDiv = styled.form`
@@ -28,7 +30,7 @@ const InputBlock = styled.div`
 const Input = styled.input`
   width: 698px;
   height: 107px;
-  border: 1px solid black;
+  border: 1px solid ${({ theme }) => theme.colors.text};
 `
 
 const Label = styled.label`
@@ -46,8 +48,12 @@ const ErrorInfo = styled.p`
   color: ${({ theme }) => theme.colors.error};
 `
 
-export const LoginFormUI: FC<LoginFormUIProps> = ({ onSubmit }) => {
-  const { errors, register, handleSubmit, formState } = useForm<FormData>({
+export const LoginFormUI: FC<LoginFormUIProps> = ({
+  customError,
+  setCustomError,
+  onSubmit,
+}) => {
+  const { errors, register, handleSubmit, formState } = useForm<LoginFormData>({
     mode: 'onSubmit',
     shouldFocusError: true,
   })
@@ -55,11 +61,12 @@ export const LoginFormUI: FC<LoginFormUIProps> = ({ onSubmit }) => {
   return (
     <FormDiv onSubmit={handleSubmit(onSubmit)} {...testId('login-form')}>
       <InputBlock>
-        <Label for="email">Email</Label>
+        <Label htmlFor="email">Email</Label>
         <Input
           type="email"
           name="email"
           autoComplete="email"
+          onChange={(_event) => setCustomError('')}
           ref={register({
             required: true,
             maxLength: 60,
@@ -70,11 +77,12 @@ export const LoginFormUI: FC<LoginFormUIProps> = ({ onSubmit }) => {
         />
       </InputBlock>
       <InputBlock>
-        <Label for="password">Senha</Label>
+        <Label htmlFor="password">Senha</Label>
         <Input
           type="password"
           name="password"
           autoComplete="password"
+          onChange={(_event) => setCustomError('')}
           ref={register({
             required: true,
             minLength: 6,
@@ -83,6 +91,7 @@ export const LoginFormUI: FC<LoginFormUIProps> = ({ onSubmit }) => {
         />
       </InputBlock>
       <Button>{formState.isSubmitting ? 'LOGANDO...' : 'ENTRAR'}</Button>
+      {customError && <ErrorInfo>{customError}</ErrorInfo>}
       {errors.email && <ErrorInfo>Email inválido</ErrorInfo>}
       {/* Essa linha abaixo é nada segura, mas ok... */}
       {errors.password && <ErrorInfo>Senha precisa conter 6 números</ErrorInfo>}

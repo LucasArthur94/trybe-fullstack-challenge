@@ -4,6 +4,7 @@ const theme = {
     text: '#000000',
     primary: '#5FE122',
     error: '#AA0000',
+    grayBackground: '#C4C4C4',
   },
   fonts: {
     body: 'Roboto',

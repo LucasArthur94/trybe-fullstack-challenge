@@ -4,21 +4,11 @@ import { ThemeProvider } from 'styled-components'
 
 import GlobalStyle from '../styles/global'
 import theme from '../styles/theme'
-import { getEntryPointRedirect } from '../helpers/gatekeeper'
+import { Gatekeeper } from '../components/common/gatekeeper'
+import { ContextProvider } from '../components/common/context.hook'
 
 class CryptoApp extends App {
   static async getInitialProps({ ctx, Component }: AppContext) {
-    if (ctx.res) {
-      const redirectPath = getEntryPointRedirect(ctx)
-
-      if (redirectPath) {
-        ctx.res.writeHead(302, {
-          Location: redirectPath,
-        })
-        ctx.res.end()
-      }
-    }
-
     const pageProps =
       Component.getInitialProps && (await Component.getInitialProps(ctx))
 
@@ -32,8 +22,11 @@ class CryptoApp extends App {
 
     return (
       <ThemeProvider theme={theme}>
-        <Component {...pageProps} />
-        <GlobalStyle />
+        <ContextProvider>
+          <GlobalStyle />
+          <Gatekeeper {...pageProps} />
+          <Component {...pageProps} />
+        </ContextProvider>
       </ThemeProvider>
     )
   }
