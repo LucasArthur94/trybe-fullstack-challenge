@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import Head from 'next/head'
 import App, { AppContext } from 'next/app'
 import { ThemeProvider } from 'styled-components'
 
@@ -22,6 +23,9 @@ class CryptoApp extends App {
 
     return (
       <ThemeProvider theme={theme}>
+        <Head>
+          <title>Crypto</title>
+        </Head>
         <ContextProvider>
           <GlobalStyle />
           <Gatekeeper {...pageProps} />
