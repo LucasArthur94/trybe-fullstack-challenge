@@ -18,7 +18,7 @@ yarn build
 yarn dev
 ```
 
-Para rodar o backend na porta 3000:
+Para rodar o frontend na porta 3000:
 
 ```sh
 cd frontend
